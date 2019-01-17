@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css?family=Source+Code+Pro");
 body {
   margin: 0;
   padding: 0;
@@ -6,9 +7,75 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: black;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+#root {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+}
+
+.grid {
+  font-family: "Courier New", monospace;
+  font-weight: bold;
+  user-select: none;
+  /* letter-spacing: 8px; */
+  display: inline-block;
+  cursor: none;
+  color: white;
+  border: 1px dotted #111;
+}
+.gridRow {
+  display: flex;
+  box-sizing: border-box;
+  height: 16px;
+}
+
+.cell {
+  width: 12px;
+  text-align: center;
+  color: white;
+  line-height: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+}
+.showGrid .cell:nth-child(n + 2) {
+  border-left: 1px dotted rgba(255, 255, 255, 0.0625);
+}
+.showGrid .gridRow:nth-child(n + 2) {
+  border-top: 1px dotted rgba(255, 255, 255, 0.0625);
+}
+.empty {
+  color: #222;
+}
+.empty > span {
+  width: 0;
+  height: 0;
+  overflow: visible;
+  position: relative;
+  top: -6px;
+  left: -7px;
+}
+.cell:hover {
+  background-color: white;
+  color: black;
+}
+.selected {
+  animation: blinker 0.75s step-start infinite;
+}
+
+@keyframes blinker {
+  50% {
+    background-color: white;
+    color: black;
+  }
+}
+
+[contenteditable="true"] {
+  outline: none;
 }
