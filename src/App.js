@@ -16,6 +16,14 @@ class App extends Component {
         this.handleType(String.fromCharCode(charCode));
       }
     };
+    document.onMouseDown = e => {
+      e = e || window.event;
+      var charCode = typeof e.which == "number" ? e.which : e.keyCode;
+      if (charCode) {
+        // alert("Character typed: " + String.fromCharCode(charCode));
+        this.handleType(String.fromCharCode(charCode));
+      }
+    };
   }
 
   setCursor = (x, y) => {
@@ -24,7 +32,8 @@ class App extends Component {
 
   poke = (char, x, y) => {
     this.state.map[y][x] = char;
-    this.setState({ map: this.state.map });
+    return this.state.map;
+    // this.setState({ map: this.state.map });
   };
 
   incrementCursor = () => {
@@ -39,12 +48,17 @@ class App extends Component {
         x = x - 1;
       }
     }
-    this.setCursor(x, y);
+    // this.setCursor(x, y);
+    return [x, y];
   };
 
   handleType = char => {
     this.poke(char, this.state.selected[0], this.state.selected[1]);
-    this.incrementCursor();
+
+    this.setState({
+      map: this.poke(char, this.state.selected[0], this.state.selected[1]),
+      selected: this.incrementCursor()
+    });
   };
 
   render() {
@@ -53,7 +67,7 @@ class App extends Component {
         data={this.state.map}
         selected={this.state.selected}
         onClick={this.setCursor}
-        onPaint={this.poke}
+        onPaint={(char, x, y) => this.setState({ map: this.poke(char, x, y) })}
         showGrid
       />
     );
@@ -61,9 +75,36 @@ class App extends Component {
 }
 
 class Grid extends Component {
+  tileSize = { x: 12, y: 16 };
+  showPos = e => {
+    e.stopPropagation();
+    let rect = e.target.getBoundingClientRect();
+    if (e.buttons == 1) {
+      const x = Math.max(
+        Math.min(
+          Math.floor((e.clientX - rect.left) / this.tileSize.x),
+          this.props.data[0].length - 1
+        ),
+        0
+      );
+      const y = Math.max(
+        Math.min(
+          Math.floor((e.clientY - rect.top) / this.tileSize.y),
+          this.props.data.length - 1
+        ),
+        0
+      );
+      // console.log([x, y]);
+      this.props.onPaint("#", x, y);
+    }
+  };
   render() {
     return (
-      <div className={`grid ${this.props.showGrid ? "showGrid" : ""}`}>
+      <div
+        className={`grid ${this.props.showGrid ? "showGrid" : ""}`}
+        onMouseMove={this.showPos}
+        // style={{ width: 100, height: 100 }}
+      >
         {this.props.data.map(
           (item, y) => (
             <div className="gridRow">
@@ -80,7 +121,7 @@ class Grid extends Component {
                     key={`${x},${y}`}
                     className={`cell ${selected ? "selected" : ""}`}
                     onClick={() => this.props.onClick(x, y)}
-                    onMouseOver={() => this.props.onPaint("#", x, y)}
+                    // onMouseOver={() => this.props.onPaint("#", x, y)}
                   >
                     {item}
                   </div>
