@@ -75,26 +75,32 @@ class App extends Component {
 }
 
 class Grid extends Component {
+  state = {
+    hover: { x: 0, y: 0 }
+  };
   tileSize = { x: 12, y: 16 };
   showPos = e => {
     e.stopPropagation();
     let rect = e.target.getBoundingClientRect();
+
+    const x = Math.max(
+      Math.min(
+        Math.floor((e.clientX - rect.left) / this.tileSize.x),
+        this.props.data[0].length - 1
+      ),
+      0
+    );
+    const y = Math.max(
+      Math.min(
+        Math.floor((e.clientY - rect.top) / this.tileSize.y),
+        this.props.data.length - 1
+      ),
+      0
+    );
+
+    this.setState({ hover: { x: x, y: y } });
+
     if (e.buttons == 1) {
-      const x = Math.max(
-        Math.min(
-          Math.floor((e.clientX - rect.left) / this.tileSize.x),
-          this.props.data[0].length - 1
-        ),
-        0
-      );
-      const y = Math.max(
-        Math.min(
-          Math.floor((e.clientY - rect.top) / this.tileSize.y),
-          this.props.data.length - 1
-        ),
-        0
-      );
-      // console.log([x, y]);
       this.props.onPaint("#", x, y);
     }
   };
@@ -103,6 +109,11 @@ class Grid extends Component {
       <div
         className={`grid ${this.props.showGrid ? "showGrid" : ""}`}
         onMouseMove={this.showPos}
+        onClick={this.props.onClick.bind(
+          this,
+          this.state.hover.x,
+          this.state.hover.y
+        )}
         // style={{ width: 100, height: 100 }}
       >
         {this.props.data.map(
@@ -119,7 +130,13 @@ class Grid extends Component {
                 return (
                   <div
                     key={`${x},${y}`}
-                    className={`cell ${selected ? "selected" : ""}`}
+                    className={`cell ${selected ? "selected" : ""} ${
+                      this.state.hover &&
+                      this.state.hover.x === x &&
+                      this.state.hover.y === y
+                        ? "hover"
+                        : ""
+                    }`}
                     onClick={() => this.props.onClick(x, y)}
                     // onMouseOver={() => this.props.onPaint("#", x, y)}
                   >

@@ -68,6 +68,10 @@ body {
   background-color: white;
   color: black;
 }
+.hover {
+  background-color: white;
+  color: black;
+}
 .selected {
   animation: blinker 0.75s step-start infinite;
 }
