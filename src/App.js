@@ -63,16 +63,40 @@ class App extends Component {
 
   render() {
     return (
-      <Grid
-        data={this.state.map}
-        selected={this.state.selected}
-        onClick={this.setCursor}
-        onPaint={(char, x, y) => this.setState({ map: this.poke(char, x, y) })}
-        showGrid
-      />
+      <div>
+        <Select options={["test", "poop"]} selected={1} />
+        <Grid
+          data={this.state.map}
+          selected={this.state.selected}
+          onClick={this.setCursor}
+          onPaint={(char, x, y) =>
+            this.setState({ map: this.poke(char, x, y) })
+          }
+          showGrid
+        />
+      </div>
     );
   }
 }
+
+const Select = props => {
+  return (
+    <div style={{ display: "flex" }}>
+      {props.options.map((option, i) => (
+        <div
+          key={i}
+          style={{
+            padding: 8,
+            backgroundColor: props.selected === i ? "white" : "default",
+            color: props.selected === i ? "black" : "default"
+          }}
+        >
+          {option}
+        </div>
+      ))}
+    </div>
+  );
+};
 
 class Grid extends Component {
   state = {
@@ -118,7 +142,7 @@ class Grid extends Component {
       >
         {this.props.data.map(
           (item, y) => (
-            <div className="gridRow">
+            <div className="gridRow" key={y}>
               {item.map((item, x) => {
                 const selected =
                   this.props.selected[0] === x && this.props.selected[1] === y;
